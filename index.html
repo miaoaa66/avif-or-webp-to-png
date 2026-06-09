@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVIF/WebP 转 PNG</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .upload-area {
+      display: block;
+      border: 3px dashed #ddd;
+      border-radius: 15px;
+      padding: 50px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+    
+    .upload-area:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+    
+    .upload-area.dragover {
+      border-color: #667eea;
+      background: #e8edff;
+      transform: scale(1.02);
+    }
+    
+    .upload-icon {
+      font-size: 60px;
+      margin-bottom: 15px;
+      color: #667eea;
+    }
+    
+    .upload-text {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .upload-hint {
+      font-size: 14px;
+      color: #999;
+    }
+    
+    .upload-hint span {
+      color: #667eea;
+      font-weight: 500;
+    }
+    
+    #fileInput {
+      display: none;
+    }
+    
+    .preview-section {
+      margin-top: 30px;
+      display: none;
+    }
+    
+    .preview-section.show {
+      display: block;
+    }
+    
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .preview-title {
+      font-size: 16px;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .image-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    .image-box {
+      border: 1px solid #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+    
+    .image-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .image-label {
+      padding: 10px;
+      text-align: center;
+      background: white;
+      font-size: 13px;
+      color: #666;
+      border-top: 1px solid #eee;
+    }
+    
+    .download-section {
+      margin-top: 25px;
+      text-align: center;
+      display: none;
+    }
+    
+    .download-section.show {
+      display: block;
+    }
+    
+    .download-btn {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      border: none;
+      padding: 12px 40px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .download-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+    }
+    
+    .format-selector {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    
+    .format-selector label {
+      font-size: 13px;
+      color: #666;
+      margin-right: 12px;
+      font-weight: 500;
+    }
+    
+    .format-options {
+      display: inline-flex;
+      gap: 8px;
+    }
+    
+    .format-option {
+      padding: 6px 16px;
+      border: 2px solid #ddd;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #666;
+      transition: all 0.2s ease;
+      background: white;
+    }
+    
+    .format-option:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    
+    .format-option.active {
+      border-color: #667eea;
+      background: #667eea;
+      color: white;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #667eea;
+      font-size: 14px;
+    }
+    
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #667eea;
+      border-top-color: transparent;
+      border-radius: 50%;
+      margin-left: 10px;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background: #ffebee;
+      border: 1px solid #ef5350;
+      border-radius: 8px;
+      padding: 12px 15px;
+      color: #c62828;
+      font-size: 14px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    .info-box {
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 25px;
+    }
+    
+    .info-box h3 {
+      color: #1565c0;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    
+    .info-box ul {
+      list-style: none;
+      font-size: 13px;
+      color: #1976d2;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <h1>🖼️ 图片格式转换</h1>
+      <p class="subtitle">将 AVIF 或 WebP 格式图片转换为 PNG 格式</p>
+      
+      <label class="upload-area" :class="{ dragover: isDragover }" for="fileInput">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">点击或拖拽上传图片</div>
+        <div class="upload-hint">支持 <span>AVIF</span> 和 <span>WebP</span> 格式</div>
+      </label>
+      <input type="file" id="fileInput" accept="image/avif,image/webp" @change="handleFileSelect">
+      
+      <div class="format-selector">
+        <label>转换格式：</label>
+        <div class="format-options">
+          <span 
+            v-for="fmt in formats" 
+            :key="fmt.value"
+            class="format-option"
+            :class="{ active: selectedFormat === fmt.value }"
+            @click="selectFormat(fmt.value)"
+          >{{ fmt.label }}</span>
+        </div>
+      </div>
+      
+      <div class="preview-section" :class="{ show: showPreview }">
+        <div class="preview-header">
+          <span class="preview-title">{{ previewTitle }}</span>
+        </div>
+        <div class="image-container">
+          <div class="image-box">
+            <img :src="originalImageUrl" alt="原图">
+            <div class="image-label">原始图片</div>
+          </div>
+          <div class="image-box">
+            <img :src="convertedImageUrl" alt="转换后">
+            <div class="image-label">{{ selectedFormat.toUpperCase() }} 图片</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="download-section" :class="{ show: showDownload }">
+        <a :href="downloadUrl" class="download-btn" :download="downloadFileName">{{ downloadBtnText }}</a>
+      </div>
+      
+      <div class="error-message" :class="{ show: error }">{{ error }}</div>
+      
+      <div class="info-box">
+        <h3>💡 使用说明</h3>
+        <ul>
+          <li>点击或拖拽上传 AVIF 或 WebP 格式图片</li>
+          <li>选择目标格式（PNG、JPG、JPEG）</li>
+          <li>系统自动转换并显示下载按钮</li>
+          <li>所有转换操作均在浏览器本地完成</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref, computed } = Vue
+
+    const formatMap = {
+      'png': { mime: 'image/png', ext: 'png' },
+      'jpg': { mime: 'image/jpeg', ext: 'jpg' },
+      'jpeg': { mime: 'image/jpeg', ext: 'jpeg' }
+    }
+
+    createApp({
+      setup() {
+        const formats = [
+          { label: 'PNG', value: 'png' },
+          { label: 'JPG', value: 'jpg' },
+          { label: 'JPEG', value: 'jpeg' }
+        ]
+        
+        const isDragover = ref(false)
+        const selectedFormat = ref('png')
+        const originalFile = ref(null)
+        const originalImageUrl = ref('')
+        const convertedImageUrl = ref('')
+        const error = ref('')
+        const showPreview = ref(false)
+        const showDownload = ref(false)
+        const previewTitle = ref('')
+
+        const downloadUrl = computed(() => convertedImageUrl.value)
+        const downloadFileName = computed(() => `converted_${Date.now()}.${formatMap[selectedFormat.value].ext}`)
+        const downloadBtnText = computed(() => `⬇️ 下载 ${selectedFormat.value.toUpperCase()} 图片`)
+
+        const selectFormat = (fmt) => {
+          selectedFormat.value = fmt
+          if (originalFile.value) {
+            convertImage()
+          }
+        }
+
+        const handleFileSelect = (e) => {
+          const file = e.target.files[0]
+          if (file) {
+            processFile(file)
+          }
+        }
+
+        const handleDragOver = (e) => {
+          e.preventDefault()
+          isDragover.value = true
+        }
+
+        const handleDragLeave = () => {
+          isDragover.value = false
+        }
+
+        const handleDrop = (e) => {
+          e.preventDefault()
+          isDragover.value = false
+          const files = e.dataTransfer.files
+          if (files.length > 0) {
+            processFile(files[0])
+          }
+        }
+
+        const processFile = (file) => {
+          const validTypes = ['image/avif', 'image/webp']
+          if (!validTypes.includes(file.type)) {
+            error.value = '请上传 AVIF 或 WebP 格式的图片'
+            return
+          }
+          
+          error.value = ''
+          originalFile.value = file
+          
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            originalImageUrl.value = e.target.result
+            convertedImageUrl.value = ''
+            showPreview.value = true
+            showDownload.value = false
+            convertImage()
+          }
+          reader.readAsDataURL(file)
+        }
+
+        const convertImage = () => {
+          if (!originalFile.value) return
+          
+          showDownload.value = false
+          previewTitle.value = '转换中...'
+          
+          const format = formatMap[selectedFormat.value]
+          const img = new Image()
+          
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            canvas.width = img.width
+            canvas.height = img.height
+            
+            const ctx = canvas.getContext('2d')
+            ctx.drawImage(img, 0, 0)
+            
+            convertedImageUrl.value = canvas.toDataURL(format.mime)
+            previewTitle.value = '转换完成'
+            showDownload.value = true
+          }
+          
+          img.onerror = () => {
+            error.value = '图片加载失败，请重试'
+            previewTitle.value = '转换失败'
+          }
+          
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            img.src = e.target.result
+          }
+          reader.readAsDataURL(originalFile.value)
+        }
+
+        return {
+          formats,
+          isDragover,
+          selectedFormat,
+          originalImageUrl,
+          convertedImageUrl,
+          error,
+          showPreview,
+          showDownload,
+          previewTitle,
+          downloadUrl,
+          downloadFileName,
+          downloadBtnText,
+          selectFormat,
+          handleFileSelect,
+          handleDragOver,
+          handleDragLeave,
+          handleDrop
+        }
+      },
+      mounted() {
+        document.addEventListener('dragover', this.handleDragOver)
+        document.addEventListener('dragleave', this.handleDragLeave)
+        document.addEventListener('drop', this.handleDrop)
+      },
+      unmounted() {
+        document.removeEventListener('dragover', this.handleDragOver)
+        document.removeEventListener('dragleave', this.handleDragLeave)
+        document.removeEventListener('drop', this.handleDrop)
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
