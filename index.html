@@ -3,332 +3,486 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AVIF/WebP 转 PNG</title>
+  <title>AVIF/WebP 转图片</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="../classCheckDemo/jszip.min.js"></script>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #eef2f7;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 20px;
+      align-items: flex-start;
+      padding: 24px;
+      color: #1f2937;
     }
-    
+
     .container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      padding: 40px;
-      max-width: 600px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 18px 50px rgba(31, 41, 55, 0.14);
+      padding: 32px;
+      max-width: 820px;
       width: 100%;
     }
-    
+
     h1 {
       text-align: center;
-      color: #333;
-      margin-bottom: 10px;
+      color: #111827;
+      margin-bottom: 8px;
       font-size: 28px;
+      font-weight: 700;
     }
-    
+
     .subtitle {
       text-align: center;
-      color: #666;
-      margin-bottom: 30px;
+      color: #6b7280;
+      margin-bottom: 24px;
       font-size: 14px;
     }
-    
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #f9fafb;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 36px;
+    }
+
+    .control-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .segmented,
+    .format-options {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .segmented button,
+    .format-option {
+      min-width: 64px;
+      padding: 8px 14px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #4b5563;
+      background: transparent;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .segmented button:hover,
+    .format-option:hover {
+      background: #eef2ff;
+      color: #4f46e5;
+    }
+
+    .segmented button.active,
+    .format-option.active {
+      background: #4f46e5;
+      color: #fff;
+      font-weight: 600;
+    }
+
     .upload-area {
       display: block;
-      border: 3px dashed #ddd;
-      border-radius: 15px;
-      padding: 50px 20px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 46px 20px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
-      background: #fafafa;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+      background: #f8fafc;
     }
-    
-    .upload-area:hover {
-      border-color: #667eea;
-      background: #f0f4ff;
-    }
-    
+
+    .upload-area:hover,
     .upload-area.dragover {
-      border-color: #667eea;
-      background: #e8edff;
-      transform: scale(1.02);
+      border-color: #4f46e5;
+      background: #eef2ff;
     }
-    
+
+    .upload-area.dragover {
+      transform: scale(1.01);
+    }
+
     .upload-icon {
-      font-size: 60px;
-      margin-bottom: 15px;
-      color: #667eea;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: #e0e7ff;
+      color: #4f46e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
     }
-    
+
     .upload-text {
       font-size: 18px;
-      color: #333;
+      color: #111827;
       margin-bottom: 8px;
+      font-weight: 600;
     }
-    
+
     .upload-hint {
       font-size: 14px;
-      color: #999;
+      color: #64748b;
     }
-    
+
     .upload-hint span {
-      color: #667eea;
-      font-weight: 500;
+      color: #4f46e5;
+      font-weight: 600;
     }
-    
+
     #fileInput {
       display: none;
     }
-    
-    .preview-section {
-      margin-top: 30px;
+
+    .status-line {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #4b5563;
+      text-align: center;
+    }
+
+    .preview-section,
+    .download-section,
+    .batch-section {
+      margin-top: 24px;
       display: none;
     }
-    
-    .preview-section.show {
+
+    .preview-section.show,
+    .download-section.show,
+    .batch-section.show {
       display: block;
     }
-    
-    .preview-header {
+
+    .preview-header,
+    .batch-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      gap: 12px;
+      margin-bottom: 14px;
     }
-    
-    .preview-title {
+
+    .preview-title,
+    .batch-title {
       font-size: 16px;
-      color: #333;
-      font-weight: 500;
+      color: #111827;
+      font-weight: 700;
     }
-    
+
     .image-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 16px;
     }
-    
+
     .image-box {
-      border: 1px solid #eee;
-      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
       overflow: hidden;
-      background: #fafafa;
+      background: #f8fafc;
     }
-    
+
     .image-box img {
       width: 100%;
-      height: auto;
+      min-height: 180px;
+      max-height: 280px;
+      object-fit: contain;
       display: block;
+      background: #f8fafc;
     }
-    
+
     .image-label {
       padding: 10px;
       text-align: center;
-      background: white;
+      background: #fff;
       font-size: 13px;
-      color: #666;
-      border-top: 1px solid #eee;
+      color: #64748b;
+      border-top: 1px solid #e5e7eb;
     }
-    
+
     .download-section {
-      margin-top: 25px;
       text-align: center;
-      display: none;
     }
-    
-    .download-section.show {
-      display: block;
-    }
-    
-    .download-btn {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+
+    .download-btn,
+    .batch-download-btn,
+    .small-download {
+      background: #059669;
       color: white;
       border: none;
-      padding: 12px 40px;
-      border-radius: 30px;
-      font-size: 16px;
-      font-weight: 600;
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.2s ease, transform 0.2s ease;
       text-decoration: none;
       display: inline-block;
     }
-    
-    .download-btn:hover {
+
+    .download-btn:hover,
+    .batch-download-btn:hover,
+    .small-download:hover {
+      background: #047857;
       transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
     }
-    
-    .format-selector {
-      margin-bottom: 20px;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 10px;
+
+    .batch-download-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
     }
-    
-    .format-selector label {
-      font-size: 13px;
-      color: #666;
-      margin-right: 12px;
-      font-weight: 500;
+
+    .batch-list {
+      display: grid;
+      gap: 10px;
     }
-    
-    .format-options {
+
+    .batch-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .batch-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      word-break: break-all;
+    }
+
+    .batch-meta {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .batch-status {
       display: inline-flex;
+      align-items: center;
+      min-width: 76px;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .batch-status.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .batch-status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .batch-status.running {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .small-download {
+      padding: 7px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
-    
-    .format-option {
-      padding: 6px 16px;
-      border: 2px solid #ddd;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 13px;
-      color: #666;
-      transition: all 0.2s ease;
-      background: white;
-    }
-    
-    .format-option:hover {
-      border-color: #667eea;
-      color: #667eea;
-    }
-    
-    .format-option.active {
-      border-color: #667eea;
-      background: #667eea;
-      color: white;
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #667eea;
-      font-size: 14px;
-    }
-    
-    .loading::after {
-      content: '';
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #667eea;
-      border-top-color: transparent;
-      border-radius: 50%;
-      margin-left: 10px;
-      animation: spin 0.8s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
+
     .error-message {
-      background: #ffebee;
-      border: 1px solid #ef5350;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
       border-radius: 8px;
-      padding: 12px 15px;
-      color: #c62828;
+      padding: 12px 14px;
+      color: #b91c1c;
       font-size: 14px;
-      margin-top: 20px;
+      margin-top: 16px;
       display: none;
     }
-    
+
     .error-message.show {
       display: block;
     }
-    
-    .info-box {
-      background: #e3f2fd;
-      border: 1px solid #90caf9;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 25px;
-    }
-    
-    .info-box h3 {
-      color: #1565c0;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-    
-    .info-box ul {
-      list-style: none;
-      font-size: 13px;
-      color: #1976d2;
-      line-height: 1.8;
+
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      .toolbar,
+      .control-group,
+      .preview-header,
+      .batch-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .segmented,
+      .format-options {
+        width: 100%;
+      }
+
+      .segmented button,
+      .format-option {
+        flex: 1;
+      }
+
+      .image-container,
+      .batch-item {
+        grid-template-columns: 1fr;
+      }
+
+      .item-actions {
+        justify-content: space-between;
+      }
     }
   </style>
 </head>
 <body>
   <div id="app">
     <div class="container">
-      <h1>🖼️ 图片格式转换</h1>
-      <p class="subtitle">将 AVIF 或 WebP 格式图片转换为 PNG 格式</p>
-      
-      <label class="upload-area" :class="{ dragover: isDragover }" for="fileInput">
-        <div class="upload-icon">📁</div>
-        <div class="upload-text">点击或拖拽上传图片</div>
-        <div class="upload-hint">支持 <span>AVIF</span> 和 <span>WebP</span> 格式</div>
-      </label>
-      <input type="file" id="fileInput" accept="image/avif,image/webp" @change="handleFileSelect">
-      
-      <div class="format-selector">
-        <label>转换格式：</label>
-        <div class="format-options">
-          <span 
-            v-for="fmt in formats" 
-            :key="fmt.value"
-            class="format-option"
-            :class="{ active: selectedFormat === fmt.value }"
-            @click="selectFormat(fmt.value)"
-          >{{ fmt.label }}</span>
+      <h1>图片格式转换</h1>
+      <p class="subtitle">将 AVIF 或 WebP 图片转换为 PNG、JPG、JPEG</p>
+
+      <div class="toolbar">
+        <div class="control-group">
+          <span class="control-label">模式</span>
+          <div class="segmented">
+            <button type="button" :class="{ active: mode === 'single' }" @click="setMode('single')">单个</button>
+            <button type="button" :class="{ active: mode === 'batch' }" @click="setMode('batch')">批量</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <span class="control-label">格式</span>
+          <div class="format-options">
+            <button
+              v-for="fmt in formats"
+              :key="fmt.value"
+              type="button"
+              class="format-option"
+              :class="{ active: selectedFormat === fmt.value }"
+              @click="selectFormat(fmt.value)"
+            >{{ fmt.label }}</button>
+          </div>
         </div>
       </div>
-      
-      <div class="preview-section" :class="{ show: showPreview }">
+
+      <label class="upload-area" :class="{ dragover: isDragover }" for="fileInput">
+        <div class="upload-icon">+</div>
+        <div class="upload-text">{{ uploadText }}</div>
+        <div class="upload-hint">支持 <span>AVIF</span> 和 <span>WebP</span>{{ mode === 'batch' ? '，可一次选择多张' : '' }}</div>
+      </label>
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/avif,image/webp"
+        :multiple="mode === 'batch'"
+        @change="handleFileSelect"
+      >
+
+      <div class="status-line" v-if="statusText">{{ statusText }}</div>
+      <div class="error-message" :class="{ show: error }">{{ error }}</div>
+
+      <div class="preview-section" :class="{ show: mode === 'single' && showPreview }">
         <div class="preview-header">
           <span class="preview-title">{{ previewTitle }}</span>
         </div>
         <div class="image-container">
           <div class="image-box">
-            <img :src="originalImageUrl" alt="原图">
+            <img :src="originalImageUrl" alt="原始图片">
             <div class="image-label">原始图片</div>
           </div>
           <div class="image-box">
-            <img :src="convertedImageUrl" alt="转换后">
+            <img :src="convertedImageUrl" alt="转换后图片">
             <div class="image-label">{{ selectedFormat.toUpperCase() }} 图片</div>
           </div>
         </div>
       </div>
-      
-      <div class="download-section" :class="{ show: showDownload }">
+
+      <div class="download-section" :class="{ show: mode === 'single' && showDownload }">
         <a :href="downloadUrl" class="download-btn" :download="downloadFileName">{{ downloadBtnText }}</a>
       </div>
-      
-      <div class="error-message" :class="{ show: error }">{{ error }}</div>
-      
-      <div class="info-box">
-        <h3>💡 使用说明</h3>
-        <ul>
-          <li>点击或拖拽上传 AVIF 或 WebP 格式图片</li>
-          <li>选择目标格式（PNG、JPG、JPEG）</li>
-          <li>系统自动转换并显示下载按钮</li>
-          <li>所有转换操作均在浏览器本地完成</li>
-        </ul>
+
+      <div class="batch-section" :class="{ show: mode === 'batch' && batchItems.length }">
+        <div class="batch-header">
+          <span class="batch-title">批量转换</span>
+          <button
+            type="button"
+            class="batch-download-btn"
+            :disabled="!successfulBatchItems.length || isBatchConverting || isZipping"
+            @click="downloadAllBatch"
+          >{{ batchDownloadBtnText }}</button>
+        </div>
+
+        <div class="batch-list">
+          <div class="batch-item" v-for="item in batchItems" :key="item.id">
+            <div>
+              <div class="batch-name">{{ item.name }}</div>
+              <div class="batch-meta">{{ formatSize(item.size) }} · {{ item.message }}</div>
+            </div>
+            <div class="item-actions">
+              <span class="batch-status" :class="item.status">{{ statusLabel(item.status) }}</span>
+              <a
+                v-if="item.status === 'success'"
+                class="small-download"
+                :href="item.convertedUrl"
+                :download="item.downloadName"
+              >下载</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -337,9 +491,9 @@
     const { createApp, ref, computed } = Vue
 
     const formatMap = {
-      'png': { mime: 'image/png', ext: 'png' },
-      'jpg': { mime: 'image/jpeg', ext: 'jpg' },
-      'jpeg': { mime: 'image/jpeg', ext: 'jpeg' }
+      png: { mime: 'image/png', ext: 'png' },
+      jpg: { mime: 'image/jpeg', ext: 'jpg' },
+      jpeg: { mime: 'image/jpeg', ext: 'jpeg' }
     }
 
     createApp({
@@ -349,33 +503,97 @@
           { label: 'JPG', value: 'jpg' },
           { label: 'JPEG', value: 'jpeg' }
         ]
-        
+
+        const mode = ref('single')
         const isDragover = ref(false)
         const selectedFormat = ref('png')
         const originalFile = ref(null)
         const originalImageUrl = ref('')
         const convertedImageUrl = ref('')
+        const convertedBlobUrl = ref('')
         const error = ref('')
         const showPreview = ref(false)
         const showDownload = ref(false)
         const previewTitle = ref('')
+        const batchItems = ref([])
+        const isBatchConverting = ref(false)
+        const isZipping = ref(false)
+        let batchRunId = 0
 
-        const downloadUrl = computed(() => convertedImageUrl.value)
-        const downloadFileName = computed(() => `converted_${Date.now()}.${formatMap[selectedFormat.value].ext}`)
-        const downloadBtnText = computed(() => `⬇️ 下载 ${selectedFormat.value.toUpperCase()} 图片`)
+        const uploadText = computed(() => mode.value === 'batch' ? '点击或拖拽上传多张图片' : '点击或拖拽上传图片')
+        const downloadUrl = computed(() => convertedBlobUrl.value || convertedImageUrl.value)
+        const downloadFileName = computed(() => getDownloadName(originalFile.value ? originalFile.value.name : 'converted'))
+        const downloadBtnText = computed(() => `下载 ${selectedFormat.value.toUpperCase()} 图片`)
+        const successfulBatchItems = computed(() => batchItems.value.filter(item => item.status === 'success'))
+        const batchDownloadBtnText = computed(() => isZipping.value ? '打包中...' : '下载全部 ZIP')
+        const statusText = computed(() => {
+          if (mode.value !== 'batch' || !batchItems.value.length) return ''
+          const done = batchItems.value.filter(item => item.status === 'success' || item.status === 'error').length
+          return `已处理 ${done}/${batchItems.value.length}，成功 ${successfulBatchItems.value.length}`
+        })
+
+        const validTypes = ['image/avif', 'image/webp']
+
+        const revokeUrl = (url) => {
+          if (url && url.startsWith('blob:')) {
+            URL.revokeObjectURL(url)
+          }
+        }
+
+        const clearSingleResult = () => {
+          revokeUrl(originalImageUrl.value)
+          revokeUrl(convertedBlobUrl.value)
+          originalImageUrl.value = ''
+          convertedImageUrl.value = ''
+          convertedBlobUrl.value = ''
+          showPreview.value = false
+          showDownload.value = false
+          previewTitle.value = ''
+        }
+
+        const clearBatchResult = () => {
+          batchRunId += 1
+          batchItems.value.forEach(item => {
+            revokeUrl(item.originalUrl)
+            revokeUrl(item.convertedUrl)
+          })
+          batchItems.value = []
+          isBatchConverting.value = false
+        }
+
+        const setMode = (nextMode) => {
+          if (mode.value === nextMode) return
+          mode.value = nextMode
+          error.value = ''
+          if (nextMode === 'single') {
+            clearBatchResult()
+          } else {
+            originalFile.value = null
+            clearSingleResult()
+          }
+        }
 
         const selectFormat = (fmt) => {
           selectedFormat.value = fmt
-          if (originalFile.value) {
-            convertImage()
+          error.value = ''
+
+          if (mode.value === 'single' && originalFile.value) {
+            convertSingleImage()
+            return
+          }
+
+          if (mode.value === 'batch' && batchItems.value.length) {
+            const files = batchItems.value.map(item => item.file)
+            processBatchFiles(files)
           }
         }
 
         const handleFileSelect = (e) => {
-          const file = e.target.files[0]
-          if (file) {
-            processFile(file)
+          const files = Array.from(e.target.files || [])
+          if (files.length) {
+            processFiles(files)
           }
+          e.target.value = ''
         }
 
         const handleDragOver = (e) => {
@@ -390,69 +608,214 @@
         const handleDrop = (e) => {
           e.preventDefault()
           isDragover.value = false
-          const files = e.dataTransfer.files
-          if (files.length > 0) {
-            processFile(files[0])
+          const files = Array.from(e.dataTransfer.files || [])
+          if (files.length) {
+            processFiles(files)
           }
         }
 
-        const processFile = (file) => {
-          const validTypes = ['image/avif', 'image/webp']
+        const processFiles = (files) => {
+          if (mode.value === 'batch') {
+            processBatchFiles(files)
+            return
+          }
+
+          processSingleFile(files[0])
+        }
+
+        const processSingleFile = async (file) => {
+          if (!file) return
           if (!validTypes.includes(file.type)) {
             error.value = '请上传 AVIF 或 WebP 格式的图片'
             return
           }
-          
+
           error.value = ''
           originalFile.value = file
-          
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            originalImageUrl.value = e.target.result
-            convertedImageUrl.value = ''
-            showPreview.value = true
-            showDownload.value = false
-            convertImage()
-          }
-          reader.readAsDataURL(file)
+          await convertSingleImage()
         }
 
-        const convertImage = () => {
+        const processBatchFiles = async (files) => {
+          clearBatchResult()
+          const currentRunId = batchRunId
+          error.value = ''
+          isBatchConverting.value = true
+
+          const items = files.map((file, index) => ({
+            id: `${Date.now()}_${index}`,
+            file,
+            name: file.name,
+            size: file.size,
+            status: validTypes.includes(file.type) ? 'pending' : 'error',
+            message: validTypes.includes(file.type) ? '等待转换' : '仅支持 AVIF 或 WebP',
+            originalUrl: '',
+            convertedUrl: '',
+            convertedBlob: null,
+            downloadName: getDownloadName(file.name)
+          }))
+
+          batchItems.value = items
+
+          for (const item of batchItems.value) {
+            if (currentRunId !== batchRunId) return
+            if (item.status === 'error') continue
+
+            item.status = 'running'
+            item.message = '转换中'
+
+            try {
+              const result = await convertFile(item.file)
+              item.originalUrl = result.originalUrl
+              item.convertedUrl = result.convertedUrl
+              item.convertedBlob = result.convertedBlob
+              item.status = 'success'
+              item.message = `已转换为 ${selectedFormat.value.toUpperCase()}`
+            } catch (err) {
+              item.status = 'error'
+              item.message = err.message || '转换失败'
+            }
+          }
+
+          if (currentRunId !== batchRunId) return
+          isBatchConverting.value = false
+          if (!successfulBatchItems.value.length) {
+            error.value = '没有可下载的转换结果'
+          }
+        }
+
+        const convertSingleImage = async () => {
           if (!originalFile.value) return
-          
-          showDownload.value = false
+
+          clearSingleResult()
           previewTitle.value = '转换中...'
-          
-          const format = formatMap[selectedFormat.value]
-          const img = new Image()
-          
-          img.onload = () => {
-            const canvas = document.createElement('canvas')
-            canvas.width = img.width
-            canvas.height = img.height
-            
-            const ctx = canvas.getContext('2d')
-            ctx.drawImage(img, 0, 0)
-            
-            convertedImageUrl.value = canvas.toDataURL(format.mime)
+          showPreview.value = true
+          error.value = ''
+
+          try {
+            const result = await convertFile(originalFile.value)
+            originalImageUrl.value = result.originalUrl
+            convertedBlobUrl.value = result.convertedUrl
+            convertedImageUrl.value = result.convertedUrl
             previewTitle.value = '转换完成'
             showDownload.value = true
-          }
-          
-          img.onerror = () => {
-            error.value = '图片加载失败，请重试'
+          } catch (err) {
+            error.value = err.message || '图片转换失败，请重试'
             previewTitle.value = '转换失败'
           }
-          
-          const reader = new FileReader()
-          reader.onload = (e) => {
-            img.src = e.target.result
+        }
+
+        const convertFile = (file) => new Promise((resolve, reject) => {
+          const format = formatMap[selectedFormat.value]
+          const originalUrl = URL.createObjectURL(file)
+          const img = new Image()
+
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            canvas.width = img.naturalWidth || img.width
+            canvas.height = img.naturalHeight || img.height
+
+            const ctx = canvas.getContext('2d')
+            ctx.drawImage(img, 0, 0)
+
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                revokeUrl(originalUrl)
+                reject(new Error('当前浏览器不支持该格式转换'))
+                return
+              }
+
+              resolve({
+                originalUrl,
+                convertedUrl: URL.createObjectURL(blob),
+                convertedBlob: blob
+              })
+            }, format.mime, selectedFormat.value === 'png' ? undefined : 0.92)
           }
-          reader.readAsDataURL(originalFile.value)
+
+          img.onerror = () => {
+            revokeUrl(originalUrl)
+            reject(new Error('图片加载失败，请确认文件可用'))
+          }
+
+          img.src = originalUrl
+        })
+
+        const getDownloadName = (fileName) => {
+          const ext = formatMap[selectedFormat.value].ext
+          const baseName = fileName.replace(/\.[^.]+$/, '') || 'converted'
+          return `${baseName}.${ext}`
+        }
+
+        const getUniqueZipName = (fileName, usedNames) => {
+          const dotIndex = fileName.lastIndexOf('.')
+          const name = dotIndex > -1 ? fileName.slice(0, dotIndex) : fileName
+          const ext = dotIndex > -1 ? fileName.slice(dotIndex) : ''
+          let nextName = fileName
+          let index = 1
+
+          while (usedNames.has(nextName)) {
+            nextName = `${name}_${index}${ext}`
+            index += 1
+          }
+
+          usedNames.add(nextName)
+          return nextName
+        }
+
+        const downloadAllBatch = async () => {
+          if (!successfulBatchItems.value.length || isZipping.value) return
+
+          if (!window.JSZip) {
+            error.value = '压缩库加载失败，无法打包下载'
+            return
+          }
+
+          isZipping.value = true
+          error.value = ''
+
+          try {
+            const zip = new JSZip()
+            const usedNames = new Set()
+
+            successfulBatchItems.value.forEach(item => {
+              zip.file(getUniqueZipName(item.downloadName, usedNames), item.convertedBlob)
+            })
+
+            const blob = await zip.generateAsync({ type: 'blob' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `converted_images_${Date.now()}.zip`
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+          } catch (err) {
+            error.value = err.message || '打包下载失败，请重试'
+          } finally {
+            isZipping.value = false
+          }
+        }
+
+        const statusLabel = (status) => {
+          const labels = {
+            pending: '等待',
+            running: '转换中',
+            success: '完成',
+            error: '失败'
+          }
+          return labels[status] || status
+        }
+
+        const formatSize = (size) => {
+          if (size < 1024) return `${size} B`
+          if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
+          return `${(size / 1024 / 1024).toFixed(2)} MB`
         }
 
         return {
           formats,
+          mode,
           isDragover,
           selectedFormat,
           originalImageUrl,
@@ -461,14 +824,25 @@
           showPreview,
           showDownload,
           previewTitle,
+          batchItems,
+          isBatchConverting,
+          isZipping,
+          uploadText,
           downloadUrl,
           downloadFileName,
           downloadBtnText,
+          successfulBatchItems,
+          batchDownloadBtnText,
+          statusText,
+          setMode,
           selectFormat,
           handleFileSelect,
           handleDragOver,
           handleDragLeave,
-          handleDrop
+          handleDrop,
+          downloadAllBatch,
+          statusLabel,
+          formatSize
         }
       },
       mounted() {
