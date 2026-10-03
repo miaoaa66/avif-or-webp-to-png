@@ -30,7 +30,7 @@
       border-radius: 12px;
       box-shadow: 0 18px 50px rgba(31, 41, 55, 0.14);
       padding: 32px;
-      max-width: 820px;
+      max-width: 860px;
       width: 100%;
     }
 
@@ -110,6 +110,28 @@
       background: #4f46e5;
       color: #fff;
       font-weight: 600;
+    }
+
+    /* 质量滑块 */
+    .quality-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quality-slider {
+      width: 130px;
+      accent-color: #4f46e5;
+      cursor: pointer;
+    }
+
+    .quality-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: #4f46e5;
+      min-width: 42px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     .upload-area {
@@ -204,6 +226,13 @@
       font-weight: 700;
     }
 
+    .preview-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .image-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -224,6 +253,18 @@
       object-fit: contain;
       display: block;
       background: #f8fafc;
+      cursor: zoom-in;
+    }
+
+    .image-placeholder {
+      min-height: 180px;
+      max-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 13px;
+      background: #f8fafc;
     }
 
     .image-label {
@@ -235,13 +276,57 @@
       border-top: 1px solid #e5e7eb;
     }
 
+    .size-compare {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #4b5563;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .arrow {
+      color: #9ca3af;
+      margin: 0 2px;
+    }
+
+    .ratio-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+
+    .ratio-badge.down {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .ratio-badge.up {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .notice-message {
+      margin-top: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #1d4ed8;
+      font-size: 13px;
+      text-align: center;
+    }
+
     .download-section {
       text-align: center;
     }
 
     .download-btn,
     .batch-download-btn,
-    .small-download {
+    .small-download,
+    .copy-btn {
       background: #059669;
       color: white;
       border: none;
@@ -262,6 +347,17 @@
       transform: translateY(-1px);
     }
 
+    .copy-btn {
+      margin-left: 10px;
+      background: #fff;
+      color: #4f46e5;
+      border: 1px solid #4f46e5;
+    }
+
+    .copy-btn:hover {
+      background: #eef2ff;
+    }
+
     .batch-download-btn:disabled {
       cursor: not-allowed;
       opacity: 0.55;
@@ -275,13 +371,74 @@
 
     .batch-item {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: auto 1fr auto;
       gap: 12px;
       align-items: center;
       padding: 12px;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       background: #fff;
+    }
+
+    .batch-thumbs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .thumb {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      flex: 0 0 auto;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+    }
+
+    .thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #94a3b8;
+      background: #f1f5f9;
+    }
+
+    .thumb-placeholder.running {
+      color: #3730a3;
+      background: #e0e7ff;
+    }
+
+    .thumb-placeholder.error {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .thumb-tag {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      font-size: 10px;
+      text-align: center;
+      color: #fff;
+      background: rgba(17, 24, 39, 0.6);
+      line-height: 14px;
+    }
+
+    .batch-info {
+      min-width: 0;
     }
 
     .batch-name {
@@ -295,6 +452,11 @@
       margin-top: 4px;
       font-size: 12px;
       color: #6b7280;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .batch-msg {
+      color: #9ca3af;
     }
 
     .batch-status {
@@ -331,6 +493,50 @@
       border-radius: 6px;
     }
 
+    .small-btn,
+    .icon-btn {
+      padding: 7px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      color: #4b5563;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .icon-btn {
+      font-size: 13px;
+      padding: 7px 12px;
+    }
+
+    .small-btn:hover,
+    .icon-btn:hover {
+      border-color: #4f46e5;
+      color: #4f46e5;
+      background: #eef2ff;
+    }
+
+    .remove-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      color: #9ca3af;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .remove-btn:hover {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
     .item-actions {
       display: flex;
       align-items: center;
@@ -350,6 +556,150 @@
 
     .error-message.show {
       display: block;
+    }
+
+    /* 拖拽全屏遮罩 */
+    .drop-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(79, 70, 229, 0.12);
+      border: 3px dashed #4f46e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .drop-overlay-inner {
+      background: #4f46e5;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.35);
+    }
+
+    /* 放大预览 */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.92);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .lightbox-bar {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      background: rgba(17, 24, 39, 0.72);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lightbox-title {
+      color: #f9fafb;
+      font-size: 13px;
+      font-weight: 600;
+      max-width: 34vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lightbox-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .lb-btn {
+      min-width: 34px;
+      height: 32px;
+      padding: 0 11px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f3f4f6;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .lb-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .lb-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .lb-zoom {
+      min-width: 54px;
+      text-align: center;
+      color: #e5e7eb;
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lb-sep {
+      width: 1px;
+      height: 20px;
+      margin: 0 2px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-stage {
+      flex: 1 1 auto;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-stage.draggable {
+      cursor: grab;
+    }
+
+    .lightbox-stage.dragging {
+      cursor: grabbing;
+    }
+
+    .lightbox-stage img {
+      max-width: none;
+      max-height: none;
+      transform-origin: center center;
+      will-change: transform;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      -webkit-user-drag: none;
+    }
+
+    .lightbox-hint {
+      flex: 0 0 auto;
+      padding: 8px 12px 12px;
+      text-align: center;
+      color: rgba(229, 231, 235, 0.55);
+      font-size: 12px;
     }
 
     @media (max-width: 640px) {
@@ -379,6 +729,15 @@
         flex: 1;
       }
 
+      .quality-row {
+        justify-content: space-between;
+      }
+
+      .quality-slider {
+        flex: 1;
+        width: auto;
+      }
+
       .image-container,
       .batch-item {
         grid-template-columns: 1fr;
@@ -386,6 +745,21 @@
 
       .item-actions {
         justify-content: space-between;
+      }
+
+      .lightbox-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 10px;
+      }
+
+      .lightbox-title,
+      .lightbox-hint {
+        display: none;
+      }
+
+      .lightbox-tools {
+        justify-content: center;
       }
     }
   </style>
@@ -418,6 +792,23 @@
             >{{ fmt.label }}</button>
           </div>
         </div>
+
+        <div class="control-group" v-if="qualityApplicable">
+          <span class="control-label">质量</span>
+          <div class="quality-row">
+            <input
+              class="quality-slider"
+              type="range"
+              min="0.5"
+              max="1"
+              step="0.01"
+              v-model.number="quality"
+              @input="onQualityInput"
+              @change="onQualityChange"
+            >
+            <span class="quality-value">{{ qualityPercent }}</span>
+          </div>
+        </div>
       </div>
 
       <label class="upload-area" :class="{ dragover: isDragover }" for="fileInput">
@@ -428,63 +819,177 @@
       <input
         type="file"
         id="fileInput"
-        accept="image/avif,image/webp"
+        accept="image/avif,image/webp,.avif,.webp"
         :multiple="mode === 'batch'"
         @change="handleFileSelect"
       >
 
       <div class="status-line" v-if="statusText">{{ statusText }}</div>
       <div class="error-message" :class="{ show: error }">{{ error }}</div>
+      <div class="notice-message" v-if="notice">{{ notice }}</div>
 
       <div class="preview-section" :class="{ show: mode === 'single' && showPreview }">
         <div class="preview-header">
           <span class="preview-title">{{ previewTitle }}</span>
+          <div class="preview-actions">
+            <button type="button" class="icon-btn" @click="triggerFileInput">重新选择</button>
+            <button type="button" class="icon-btn" @click="clearSingle">清空</button>
+          </div>
         </div>
         <div class="image-container">
           <div class="image-box">
-            <img :src="originalImageUrl" alt="原始图片">
+            <img
+              v-if="originalImageUrl"
+              :src="originalImageUrl"
+              alt="原始图片"
+              @click="openSingleOriginal"
+            >
+            <div v-else class="image-placeholder">加载中…</div>
             <div class="image-label">原始图片</div>
           </div>
           <div class="image-box">
-            <img :src="convertedImageUrl" alt="转换后图片">
+            <img
+              v-if="convertedImageUrl"
+              :src="convertedImageUrl"
+              alt="转换后图片"
+              @click="openSingleConverted"
+            >
+            <div v-else class="image-placeholder">转换中…</div>
             <div class="image-label">{{ selectedFormat.toUpperCase() }} 图片</div>
           </div>
         </div>
+        <div class="size-compare" v-if="singleRatio">
+          <span>{{ formatSize(originalSize) }}</span>
+          <span class="arrow">→</span>
+          <span>{{ formatSize(convertedSize) }}</span>
+          <span class="ratio-badge" :class="singleRatio.smaller ? 'down' : 'up'">{{ singleRatio.text }}</span>
+        </div>
+        <div class="notice-message" v-if="previewMessage">{{ previewMessage }}</div>
       </div>
 
       <div class="download-section" :class="{ show: mode === 'single' && showDownload }">
         <a :href="downloadUrl" class="download-btn" :download="downloadFileName">{{ downloadBtnText }}</a>
+        <button type="button" class="copy-btn" @click="copySingle">
+          {{ copiedKey === 'single' ? '已复制' : '复制图片' }}
+        </button>
       </div>
 
       <div class="batch-section" :class="{ show: mode === 'batch' && batchItems.length }">
         <div class="batch-header">
           <span class="batch-title">批量转换</span>
-          <button
-            type="button"
-            class="batch-download-btn"
-            :disabled="!successfulBatchItems.length || isBatchConverting || isZipping"
-            @click="downloadAllBatch"
-          >{{ batchDownloadBtnText }}</button>
+          <div class="preview-actions">
+            <button type="button" class="icon-btn" @click="clearBatch">清空列表</button>
+            <button
+              type="button"
+              class="batch-download-btn"
+              :disabled="!successfulBatchItems.length || isBatchConverting || isZipping"
+              @click="downloadAllBatch"
+            >{{ batchDownloadBtnText }}</button>
+          </div>
         </div>
 
         <div class="batch-list">
           <div class="batch-item" v-for="item in batchItems" :key="item.id">
-            <div>
-              <div class="batch-name">{{ item.name }}</div>
-              <div class="batch-meta">{{ formatSize(item.size) }} · {{ item.message }}</div>
+            <div class="batch-thumbs">
+              <div class="thumb">
+                <img
+                  v-if="item.originalUrl"
+                  :src="item.originalUrl"
+                  alt="原图"
+                  @click="openBatchOriginal(item)"
+                >
+                <div v-else class="thumb-placeholder error">!</div>
+                <span class="thumb-tag">原图</span>
+              </div>
+              <div class="thumb">
+                <img
+                  v-if="item.convertedUrl"
+                  :src="item.convertedUrl"
+                  alt="转换后"
+                  @click="openBatchConverted(item)"
+                >
+                <div v-else class="thumb-placeholder" :class="item.status">{{ placeholderText(item.status) }}</div>
+                <span class="thumb-tag">{{ selectedFormat.toUpperCase() }}</span>
+              </div>
             </div>
+
+            <div class="batch-info">
+              <div class="batch-name">{{ item.name }}</div>
+              <div class="batch-meta">
+                <span>{{ formatSize(item.size) }}</span>
+                <template v-if="item.status === 'success'">
+                  <span class="arrow">→</span>
+                  <span>{{ formatSize(item.convertedSize) }}</span>
+                  <span class="ratio-badge" :class="ratioOf(item).smaller ? 'down' : 'up'">{{ ratioOf(item).text }}</span>
+                </template>
+                <span class="batch-msg"> · {{ item.message }}</span>
+              </div>
+            </div>
+
             <div class="item-actions">
               <span class="batch-status" :class="item.status">{{ statusLabel(item.status) }}</span>
+              <button
+                v-if="item.status === 'success'"
+                type="button"
+                class="small-btn"
+                @click="copyItem(item)"
+              >{{ copiedKey === item.id ? '已复制' : '复制' }}</button>
               <a
                 v-if="item.status === 'success'"
                 class="small-download"
                 :href="item.convertedUrl"
                 :download="item.downloadName"
               >下载</a>
+              <button type="button" class="remove-btn" title="移除" @click="removeBatchItem(item.id)">×</button>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="drop-overlay" v-if="isDragover">
+      <div class="drop-overlay-inner">松手即可上传</div>
+    </div>
+
+    <div class="lightbox" v-if="lightbox">
+      <div class="lightbox-bar">
+        <div class="lightbox-title">{{ lightbox.title }}</div>
+        <div class="lightbox-tools">
+          <button type="button" class="lb-btn" title="缩小" :disabled="atMinZoom" @click="zoomBy(-1)">−</button>
+          <span class="lb-zoom">{{ zoomPercent }}</span>
+          <button type="button" class="lb-btn" title="放大" :disabled="atMaxZoom" @click="zoomBy(1)">＋</button>
+          <button type="button" class="lb-btn" title="适应窗口" @click="zoomFit">适应</button>
+          <button type="button" class="lb-btn" title="实际像素" @click="zoomActual">1:1</button>
+          <span class="lb-sep"></span>
+          <button type="button" class="lb-btn" title="复制图片" @click="copyCurrent">
+            {{ copiedKey === 'lightbox' ? '已复制' : '复制' }}
+          </button>
+          <a class="lb-btn" title="下载" :href="lightbox.downloadUrl" :download="lightbox.downloadName">下载</a>
+          <span class="lb-sep"></span>
+          <button type="button" class="lb-btn" title="关闭" @click="closeLightbox">关闭</button>
+        </div>
+      </div>
+
+      <div
+        class="lightbox-stage"
+        :class="{ draggable: canDrag, dragging: isDragging }"
+        @mousedown="startDrag"
+        @mousemove="onDrag"
+        @mouseup="endDrag"
+        @mouseleave="endDrag"
+        @wheel.prevent="onLightboxWheel"
+      >
+        <img
+          :src="lightbox.url"
+          :style="lightboxImgStyle"
+          alt="放大预览"
+          draggable="false"
+          @load="onLightboxImgLoad"
+          @dblclick.stop="toggleActual"
+        >
+      </div>
+
+      <div class="lightbox-hint">滚轮缩放 · 双击切换 1:1 · 按住拖拽平移 · Esc 关闭</div>
     </div>
   </div>
 
@@ -497,6 +1002,111 @@
       jpeg: { mime: 'image/jpeg', ext: 'jpeg' }
     }
 
+    const EXT_MIME = { avif: 'image/avif', webp: 'image/webp' }
+    const VALID_TYPES = ['image/avif', 'image/webp']
+
+    // 大图保护阈值
+    const MAX_EDGE = 16384
+    const MAX_AREA = 100 * 1024 * 1024
+
+    // 放大预览缩放范围（相对原始像素）
+    const LB_MIN_SCALE = 0.05
+    const LB_MAX_SCALE = 8
+
+    const revokeUrl = (url) => {
+      if (url && url.startsWith('blob:')) {
+        URL.revokeObjectURL(url)
+      }
+    }
+
+    const getFileMime = (file) => {
+      const type = (file.type || '').toLowerCase()
+      if (VALID_TYPES.includes(type)) return type
+      const ext = (file.name.split('.').pop() || '').toLowerCase()
+      return EXT_MIME[ext] || ''
+    }
+
+    const isSupportedFile = (file) => !!getFileMime(file)
+
+    const computeScale = (width, height) => {
+      if (!width || !height) return 1
+      return Math.min(1, MAX_EDGE / Math.max(width, height), Math.sqrt(MAX_AREA / (width * height)))
+    }
+
+    const formatSize = (size) => {
+      if (size === null || size === undefined || Number.isNaN(size)) return '-'
+      if (size < 1024) return `${size} B`
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
+      return `${(size / 1024 / 1024).toFixed(2)} MB`
+    }
+
+    // 压缩率：变小返回「-72%」，变大返回「+15%」
+    const ratioInfo = (original, converted) => {
+      if (!original || !converted) return null
+      const pct = Math.round((1 - converted / original) * 100)
+      return {
+        text: pct >= 0 ? `-${pct}%` : `+${Math.abs(pct)}%`,
+        smaller: pct >= 0
+      }
+    }
+
+    const loadImage = (url) => new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => {
+        const width = img.naturalWidth || img.width
+        const height = img.naturalHeight || img.height
+        if (!width || !height) {
+          reject(new Error('图片加载失败，请确认文件可用'))
+          return
+        }
+        resolve({ image: img, width, height })
+      }
+      img.onerror = () => reject(new Error('图片加载失败，请确认文件可用'))
+      img.src = url
+    })
+
+    // 解码 + 计算缩放，originalUrl 由调用方创建并传入
+    const createSource = async (url) => {
+      const { image, width, height } = await loadImage(url)
+      const scale = computeScale(width, height)
+      return { image, originalUrl: url, width, height, scale, oversized: scale < 1 }
+    }
+
+    const encodeCanvas = (source, format, quality) => new Promise((resolve, reject) => {
+      const width = Math.max(1, Math.round(source.width * source.scale))
+      const height = Math.max(1, Math.round(source.height * source.scale))
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        reject(new Error('当前浏览器不支持图片转换'))
+        return
+      }
+
+      try {
+        // JPEG 无透明通道，先铺白底，避免透明区域变成黑色
+        if (format.mime === 'image/jpeg') {
+          ctx.fillStyle = '#ffffff'
+          ctx.fillRect(0, 0, width, height)
+        }
+        ctx.drawImage(source.image, 0, 0, width, height)
+      } catch (err) {
+        reject(new Error('图片过大或浏览器不支持，请尝试更小的图片'))
+        return
+      }
+
+      const encodeQuality = format.mime === 'image/png' ? undefined : quality
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('图片过大或浏览器不支持，请尝试更小的图片'))
+          return
+        }
+        resolve(blob)
+      }, format.mime, encodeQuality)
+    })
+
     createApp({
       setup() {
         const formats = [
@@ -508,75 +1118,401 @@
         const mode = ref('single')
         const isDragover = ref(false)
         const selectedFormat = ref('png')
+        const quality = ref(0.92)
         const originalFile = ref(null)
         const originalImageUrl = ref('')
         const convertedImageUrl = ref('')
         const convertedBlobUrl = ref('')
+        const convertedBlob = ref(null)
+        const originalSize = ref(0)
+        const convertedSize = ref(0)
         const error = ref('')
+        const notice = ref('')
         const showPreview = ref(false)
         const showDownload = ref(false)
         const previewTitle = ref('')
+        const previewMessage = ref('')
         const batchItems = ref([])
         const isBatchConverting = ref(false)
         const isZipping = ref(false)
+        const copiedKey = ref('')
+
+        // 放大预览状态
+        const lightbox = ref(null)
+        const lbZoom = ref(1)
+        const lbFit = ref(1)
+        const lbOffset = ref({ x: 0, y: 0 })
+        const lbNatural = ref({ w: 0, h: 0 })
+        const isDragging = ref(false)
+        const viewport = ref({ w: typeof window !== 'undefined' ? window.innerWidth : 1280, h: typeof window !== 'undefined' ? window.innerHeight : 800 })
+
         let batchRunId = 0
+        let singleToken = 0
+        let qualityTimer = 0
+        let dragDepth = 0
+        let dragStart = { x: 0, y: 0 }
+        let dragOrigin = { x: 0, y: 0 }
+        let movedDist = 0
+
+        // 已解码图像缓存，key 为 'single' 或 item.id。不要放进 ref，避免 Vue 深代理大对象
+        const sourceCache = new Map()
 
         const uploadText = computed(() => mode.value === 'batch' ? '点击或拖拽上传多张图片' : '点击或拖拽上传图片')
+        const qualityApplicable = computed(() => selectedFormat.value !== 'png')
+        const qualityPercent = computed(() => `${Math.round(quality.value * 100)}%`)
         const downloadUrl = computed(() => convertedBlobUrl.value || convertedImageUrl.value)
         const downloadFileName = computed(() => getDownloadName(originalFile.value ? originalFile.value.name : 'converted'))
+        const originalDownloadName = computed(() => originalFile.value ? originalFile.value.name : 'original')
         const downloadBtnText = computed(() => `下载 ${selectedFormat.value.toUpperCase()} 图片`)
         const successfulBatchItems = computed(() => batchItems.value.filter(item => item.status === 'success'))
         const batchDownloadBtnText = computed(() => isZipping.value ? '打包中...' : '下载全部 ZIP')
+        const singleRatio = computed(() => ratioInfo(originalSize.value, convertedSize.value))
         const statusText = computed(() => {
           if (mode.value !== 'batch' || !batchItems.value.length) return ''
           const done = batchItems.value.filter(item => item.status === 'success' || item.status === 'error').length
           return `已处理 ${done}/${batchItems.value.length}，成功 ${successfulBatchItems.value.length}`
         })
 
-        const validTypes = ['image/avif', 'image/webp']
-
-        const revokeUrl = (url) => {
-          if (url && url.startsWith('blob:')) {
-            URL.revokeObjectURL(url)
-          }
+        const getDownloadName = (fileName) => {
+          const ext = formatMap[selectedFormat.value].ext
+          const baseName = (fileName || 'converted').replace(/\.[^.]+$/, '') || 'converted'
+          return `${baseName}.${ext}`
         }
 
+        const ratioOf = (item) => ratioInfo(item.size, item.convertedSize) || { text: '', smaller: true }
+
+        const placeholderText = (status) => {
+          if (status === 'running') return '转换中'
+          if (status === 'error') return '失败'
+          return '等待'
+        }
+
+        const statusLabel = (status) => {
+          const labels = {
+            pending: '等待',
+            running: '转换中',
+            success: '完成',
+            error: '失败'
+          }
+          return labels[status] || status
+        }
+
+        // ---------- 结果清理 ----------
         const clearSingleResult = () => {
+          singleToken += 1
+          const cached = sourceCache.get('single')
+          if (cached) revokeUrl(cached.originalUrl)
           revokeUrl(originalImageUrl.value)
           revokeUrl(convertedBlobUrl.value)
+          sourceCache.delete('single')
+
           originalImageUrl.value = ''
           convertedImageUrl.value = ''
           convertedBlobUrl.value = ''
+          convertedBlob.value = null
+          originalSize.value = 0
+          convertedSize.value = 0
           showPreview.value = false
           showDownload.value = false
           previewTitle.value = ''
+          previewMessage.value = ''
         }
 
         const clearBatchResult = () => {
           batchRunId += 1
           batchItems.value.forEach(item => {
+            item.cancelled = true
             revokeUrl(item.originalUrl)
             revokeUrl(item.convertedUrl)
+            sourceCache.delete(item.id)
           })
           batchItems.value = []
           isBatchConverting.value = false
         }
 
+        const clearSingle = () => {
+          clearSingleResult()
+          originalFile.value = null
+          error.value = ''
+          notice.value = ''
+        }
+
+        const clearBatch = () => {
+          clearBatchResult()
+          error.value = ''
+          notice.value = ''
+        }
+
+        const removeBatchItem = (id) => {
+          const index = batchItems.value.findIndex(item => item.id === id)
+          if (index === -1) return
+          const item = batchItems.value[index]
+          item.cancelled = true
+          revokeUrl(item.originalUrl)
+          revokeUrl(item.convertedUrl)
+          sourceCache.delete(item.id)
+          batchItems.value.splice(index, 1)
+          if (!batchItems.value.length) {
+            error.value = ''
+            notice.value = ''
+          }
+        }
+
+        const triggerFileInput = () => {
+          const input = document.getElementById('fileInput')
+          if (input) input.click()
+        }
+
+        // ---------- 放大预览 ----------
+        const availSize = () => ({
+          w: Math.max(120, viewport.value.w - 48),
+          h: Math.max(120, viewport.value.h - 96)
+        })
+
+        const zoomBounds = () => {
+          const fit = lbFit.value || 1
+          return { min: LB_MIN_SCALE / fit, max: LB_MAX_SCALE / fit }
+        }
+
+        const atMinZoom = computed(() => lbZoom.value <= zoomBounds().min + 1e-6)
+        const atMaxZoom = computed(() => lbZoom.value >= zoomBounds().max - 1e-6)
+        const zoomPercent = computed(() => (lightbox.value ? `${Math.round(lbFit.value * lbZoom.value * 100)}%` : ''))
+        const canDrag = computed(() => {
+          const scale = lbFit.value * lbZoom.value
+          const area = availSize()
+          return lbNatural.value.w * scale > area.w + 2 || lbNatural.value.h * scale > area.h + 2
+        })
+        const lightboxImgStyle = computed(() => {
+          if (!lightbox.value || !lbNatural.value.w) return { visibility: 'hidden' }
+          return {
+            width: `${lbNatural.value.w}px`,
+            height: `${lbNatural.value.h}px`,
+            transform: `translate(${lbOffset.value.x}px, ${lbOffset.value.y}px) scale(${lbFit.value * lbZoom.value})`
+          }
+        })
+
+        const recomputeFit = () => {
+          const { w, h } = lbNatural.value
+          if (!w || !h) {
+            lbFit.value = 1
+            return
+          }
+          const area = availSize()
+          lbFit.value = Math.min(area.w / w, area.h / h, 1)
+        }
+
+        const clampOffset = () => {
+          const { w, h } = lbNatural.value
+          if (!w || !h) return
+          const scale = lbFit.value * lbZoom.value
+          const area = availSize()
+          const maxX = Math.max(0, (w * scale - area.w) / 2)
+          const maxY = Math.max(0, (h * scale - area.h) / 2)
+          lbOffset.value = {
+            x: Math.min(maxX, Math.max(-maxX, lbOffset.value.x)),
+            y: Math.min(maxY, Math.max(-maxY, lbOffset.value.y))
+          }
+        }
+
+        const setZoom = (next) => {
+          const { min, max } = zoomBounds()
+          lbZoom.value = Math.min(max, Math.max(min, next))
+          clampOffset()
+        }
+
+        const zoomBy = (direction) => setZoom(lbZoom.value * (direction > 0 ? 1.25 : 0.8))
+
+        const zoomFit = () => {
+          lbZoom.value = 1
+          lbOffset.value = { x: 0, y: 0 }
+        }
+
+        const zoomActual = () => {
+          setZoom(1 / (lbFit.value || 1))
+          lbOffset.value = { x: 0, y: 0 }
+        }
+
+        const toggleActual = () => {
+          const actual = 1 / (lbFit.value || 1)
+          const atActual = Math.abs(lbZoom.value - actual) < 0.02 &&
+            Math.abs(lbOffset.value.x) < 1 && Math.abs(lbOffset.value.y) < 1
+          if (atActual) zoomFit()
+          else zoomActual()
+        }
+
+        const openLightbox = (target) => {
+          if (!target || !target.url) return
+          lightbox.value = target
+          lbZoom.value = 1
+          lbFit.value = 1
+          lbOffset.value = { x: 0, y: 0 }
+          lbNatural.value = { w: 0, h: 0 }
+          viewport.value = { w: window.innerWidth, h: window.innerHeight }
+          document.body.style.overflow = 'hidden'
+        }
+
+        const closeLightbox = () => {
+          lightbox.value = null
+          isDragging.value = false
+          document.body.style.overflow = ''
+        }
+
+        const onLightboxImgLoad = (e) => {
+          lbNatural.value = { w: e.target.naturalWidth, h: e.target.naturalHeight }
+          recomputeFit()
+          lbZoom.value = 1
+          lbOffset.value = { x: 0, y: 0 }
+        }
+
+        const onLightboxWheel = (e) => {
+          zoomBy(e.deltaY < 0 ? 1 : -1)
+        }
+
+        const startDrag = (e) => {
+          if (!lightbox.value || e.button !== 0) return
+          isDragging.value = true
+          dragStart = { x: e.clientX, y: e.clientY }
+          dragOrigin = { x: lbOffset.value.x, y: lbOffset.value.y }
+          movedDist = 0
+        }
+
+        const onDrag = (e) => {
+          if (!isDragging.value) return
+          const dx = e.clientX - dragStart.x
+          const dy = e.clientY - dragStart.y
+          movedDist = Math.max(movedDist, Math.sqrt(dx * dx + dy * dy))
+          lbOffset.value = { x: dragOrigin.x + dx, y: dragOrigin.y + dy }
+          clampOffset()
+        }
+
+        const endDrag = (e) => {
+          if (!isDragging.value) return
+          isDragging.value = false
+          const onImage = !!(e && e.target && e.target.tagName === 'IMG')
+          if (movedDist < 4 && !onImage) closeLightbox()
+        }
+
+        const handleResize = () => {
+          viewport.value = { w: window.innerWidth, h: window.innerHeight }
+          if (lightbox.value) {
+            recomputeFit()
+            setZoom(lbZoom.value)
+          }
+        }
+
+        // 不同入口打开的放大目标（含标题 / 下载信息 / 复制来源）
+        const openSingleOriginal = () => openLightbox({
+          url: originalImageUrl.value,
+          title: '原始图片',
+          downloadUrl: originalImageUrl.value,
+          downloadName: originalDownloadName.value,
+          copy: { kind: 'source', key: 'single' }
+        })
+
+        const openSingleConverted = () => openLightbox({
+          url: convertedImageUrl.value,
+          title: `${selectedFormat.value.toUpperCase()} 图片`,
+          downloadUrl: downloadUrl.value,
+          downloadName: downloadFileName.value,
+          copy: { kind: 'blob', blob: convertedBlob.value }
+        })
+
+        const openBatchOriginal = (item) => openLightbox({
+          url: item.originalUrl,
+          title: item.name,
+          downloadUrl: item.originalUrl,
+          downloadName: item.name,
+          copy: { kind: 'source', key: item.id }
+        })
+
+        const openBatchConverted = (item) => openLightbox({
+          url: item.convertedUrl,
+          title: item.downloadName,
+          downloadUrl: item.convertedUrl,
+          downloadName: item.downloadName,
+          copy: { kind: 'blob', blob: item.convertedBlob }
+        })
+
+        // ---------- 复制到剪贴板（优先用原 MIME，浏览器拒绝时回退 PNG）----------
+        const canCopyImage = computed(() => !!(window.isSecureContext && navigator.clipboard && window.ClipboardItem))
+
+        const toPngBlob = async (blob) => {
+          const url = URL.createObjectURL(blob)
+          try {
+            const source = await createSource(url)
+            return await encodeCanvas(source, formatMap.png, undefined)
+          } finally {
+            revokeUrl(url)
+          }
+        }
+
+        const doCopy = async (payload, key) => {
+          error.value = ''
+          if (!payload) return
+          if (!canCopyImage.value) {
+            error.value = '当前以本地文件方式打开（file://），浏览器禁止写入剪贴板，请改用「下载」'
+            return
+          }
+          try {
+            let blob = null
+            if (payload.kind === 'blob') {
+              blob = payload.blob || null
+            } else {
+              const source = sourceCache.get(payload.key)
+              if (source) blob = await encodeCanvas(source, formatMap.png, undefined)
+            }
+            if (!blob) {
+              error.value = '暂无可复制的内容，请先完成转换'
+              return
+            }
+            const mime = blob.type || 'image/png'
+            try {
+              await navigator.clipboard.write([new window.ClipboardItem({ [mime]: blob })])
+            } catch (writeErr) {
+              if (mime === 'image/png') throw writeErr
+              const png = await toPngBlob(blob)
+              await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': png })])
+            }
+            copiedKey.value = key
+            window.setTimeout(() => {
+              if (copiedKey.value === key) copiedKey.value = ''
+            }, 2000)
+          } catch (err) {
+            error.value = `复制失败：${err && err.message ? err.message : '浏览器不支持'}`
+          }
+        }
+
+        const copySingle = () => {
+          if (convertedBlob.value) doCopy({ kind: 'blob', blob: convertedBlob.value }, 'single')
+        }
+
+        const copyItem = (item) => {
+          if (item && item.convertedBlob) doCopy({ kind: 'blob', blob: item.convertedBlob }, item.id)
+        }
+
+        const copyCurrent = () => {
+          if (lightbox.value) doCopy(lightbox.value.copy, 'lightbox')
+        }
+
+        // ---------- 模式 / 格式 / 质量 ----------
         const setMode = (nextMode) => {
           if (mode.value === nextMode) return
           mode.value = nextMode
           error.value = ''
+          notice.value = ''
           if (nextMode === 'single') {
             clearBatchResult()
           } else {
-            originalFile.value = null
             clearSingleResult()
+            originalFile.value = null
           }
         }
 
         const selectFormat = (fmt) => {
+          if (selectedFormat.value === fmt) return
           selectedFormat.value = fmt
           error.value = ''
+          notice.value = ''
 
           if (mode.value === 'single' && originalFile.value) {
             convertSingleImage()
@@ -584,11 +1520,29 @@
           }
 
           if (mode.value === 'batch' && batchItems.value.length) {
-            const files = batchItems.value.map(item => item.file)
-            processBatchFiles(files)
+            reconvertBatch()
           }
         }
 
+        const applyQuality = () => {
+          if (mode.value === 'single') {
+            if (originalFile.value) convertSingleImage()
+          } else if (batchItems.value.length) {
+            reconvertBatch()
+          }
+        }
+
+        const onQualityInput = () => {
+          window.clearTimeout(qualityTimer)
+          qualityTimer = window.setTimeout(applyQuality, 300)
+        }
+
+        const onQualityChange = () => {
+          window.clearTimeout(qualityTimer)
+          applyQuality()
+        }
+
+        // ---------- 文件选择 ----------
         const handleFileSelect = (e) => {
           const files = Array.from(e.target.files || [])
           if (files.length) {
@@ -597,156 +1551,193 @@
           e.target.value = ''
         }
 
-        const handleDragOver = (e) => {
-          e.preventDefault()
-          isDragover.value = true
-        }
-
-        const handleDragLeave = () => {
-          isDragover.value = false
-        }
-
-        const handleDrop = (e) => {
-          e.preventDefault()
-          isDragover.value = false
-          const files = Array.from(e.dataTransfer.files || [])
-          if (files.length) {
-            processFiles(files)
-          }
-        }
-
         const processFiles = (files) => {
           if (mode.value === 'batch') {
             processBatchFiles(files)
             return
           }
-
+          if (files.length > 1) {
+            notice.value = '单张模式仅处理第一张图片，如需批量转换请切换到「批量」模式'
+          }
           processSingleFile(files[0])
         }
 
         const processSingleFile = async (file) => {
           if (!file) return
-          if (!validTypes.includes(file.type)) {
+          if (!isSupportedFile(file)) {
             error.value = '请上传 AVIF 或 WebP 格式的图片'
             return
           }
-
           error.value = ''
+          clearSingleResult()
           originalFile.value = file
           await convertSingleImage()
         }
 
+        // ---------- 单个转换 ----------
+        const convertSingleImage = async () => {
+          if (!originalFile.value) return
+
+          const token = ++singleToken
+          revokeUrl(convertedBlobUrl.value)
+          convertedBlobUrl.value = ''
+          convertedImageUrl.value = ''
+          convertedBlob.value = null
+          convertedSize.value = 0
+          showDownload.value = false
+          error.value = ''
+          previewTitle.value = '转换中...'
+          previewMessage.value = ''
+          showPreview.value = true
+
+          try {
+            let source = sourceCache.get('single')
+            if (!source) {
+              const url = URL.createObjectURL(originalFile.value)
+              source = await createSource(url)
+              if (token !== singleToken) {
+                revokeUrl(url)
+                return
+              }
+              sourceCache.set('single', source)
+              originalSize.value = originalFile.value.size
+            }
+            // 解码后立即显示原图，避免预览区先出现空白
+            originalImageUrl.value = source.originalUrl
+
+            const blob = await encodeCanvas(source, formatMap[selectedFormat.value], quality.value)
+            if (token !== singleToken) return
+
+            convertedBlob.value = blob
+            convertedSize.value = blob.size
+            convertedBlobUrl.value = URL.createObjectURL(blob)
+            convertedImageUrl.value = convertedBlobUrl.value
+            previewTitle.value = '转换完成'
+            previewMessage.value = source.oversized
+              ? `原图超过浏览器画布上限，已缩小至 ${Math.round(source.width * source.scale)}×${Math.round(source.height * source.scale)} 处理`
+              : ''
+            showDownload.value = true
+          } catch (err) {
+            if (token !== singleToken) return
+            error.value = err.message || '图片转换失败，请重试'
+            previewTitle.value = '转换失败'
+          }
+        }
+
+        // ---------- 批量转换 ----------
         const processBatchFiles = async (files) => {
           clearBatchResult()
-          const currentRunId = batchRunId
+          const runId = batchRunId
           error.value = ''
+          notice.value = ''
           isBatchConverting.value = true
 
-          const items = files.map((file, index) => ({
-            id: `${Date.now()}_${index}`,
-            file,
-            name: file.name,
-            size: file.size,
-            status: validTypes.includes(file.type) ? 'pending' : 'error',
-            message: validTypes.includes(file.type) ? '等待转换' : '仅支持 AVIF 或 WebP',
-            originalUrl: '',
-            convertedUrl: '',
-            convertedBlob: null,
-            downloadName: getDownloadName(file.name)
-          }))
+          batchItems.value = files.map((file, index) => {
+            const supported = isSupportedFile(file)
+            return {
+              id: `${Date.now()}_${index}_${Math.random().toString(36).slice(2, 7)}`,
+              file,
+              name: file.name,
+              size: file.size,
+              supported,
+              status: supported ? 'pending' : 'error',
+              message: supported ? '等待转换' : '仅支持 AVIF 或 WebP',
+              originalUrl: supported ? URL.createObjectURL(file) : '',
+              convertedUrl: '',
+              convertedBlob: null,
+              convertedSize: 0,
+              downloadName: getDownloadName(file.name),
+              oversized: false,
+              cancelled: false
+            }
+          })
 
-          batchItems.value = items
-
-          for (const item of batchItems.value) {
-            if (currentRunId !== batchRunId) return
+          const items = batchItems.value
+          for (let i = 0; i < items.length; i += 1) {
+            const item = items[i]
+            if (runId !== batchRunId) return
+            if (item.cancelled || !batchItems.value.includes(item)) continue
             if (item.status === 'error') continue
 
             item.status = 'running'
             item.message = '转换中'
 
             try {
-              const result = await convertFile(item.file)
-              item.originalUrl = result.originalUrl
-              item.convertedUrl = result.convertedUrl
-              item.convertedBlob = result.convertedBlob
+              const source = await createSource(item.originalUrl)
+              if (runId !== batchRunId || item.cancelled || !batchItems.value.includes(item)) continue
+              sourceCache.set(item.id, source)
+              item.oversized = source.oversized
+
+              const blob = await encodeCanvas(source, formatMap[selectedFormat.value], quality.value)
+              if (runId !== batchRunId || item.cancelled || !batchItems.value.includes(item)) continue
+
+              item.convertedBlob = blob
+              item.convertedSize = blob.size
+              item.convertedUrl = URL.createObjectURL(blob)
               item.status = 'success'
-              item.message = `已转换为 ${selectedFormat.value.toUpperCase()}`
+              item.message = `已转换为 ${selectedFormat.value.toUpperCase()}${source.oversized ? '（已缩小）' : ''}`
             } catch (err) {
+              if (runId !== batchRunId || item.cancelled) continue
               item.status = 'error'
               item.message = err.message || '转换失败'
             }
           }
 
-          if (currentRunId !== batchRunId) return
+          if (runId !== batchRunId) return
           isBatchConverting.value = false
           if (!successfulBatchItems.value.length) {
             error.value = '没有可下载的转换结果'
           }
         }
 
-        const convertSingleImage = async () => {
-          if (!originalFile.value) return
-
-          clearSingleResult()
-          previewTitle.value = '转换中...'
-          showPreview.value = true
+        // 复用已解码图像重新编码（切格式 / 调质量），不重新解码、不重建列表
+        const reconvertBatch = async () => {
+          if (isBatchConverting.value) return
+          const runId = batchRunId
+          isBatchConverting.value = true
           error.value = ''
 
           try {
-            const result = await convertFile(originalFile.value)
-            originalImageUrl.value = result.originalUrl
-            convertedBlobUrl.value = result.convertedUrl
-            convertedImageUrl.value = result.convertedUrl
-            previewTitle.value = '转换完成'
-            showDownload.value = true
-          } catch (err) {
-            error.value = err.message || '图片转换失败，请重试'
-            previewTitle.value = '转换失败'
-          }
-        }
+            const items = batchItems.value
+            for (let i = 0; i < items.length; i += 1) {
+              const item = items[i]
+              if (runId !== batchRunId) return
+              if (!item.supported || item.cancelled || !batchItems.value.includes(item)) continue
 
-        const convertFile = (file) => new Promise((resolve, reject) => {
-          const format = formatMap[selectedFormat.value]
-          const originalUrl = URL.createObjectURL(file)
-          const img = new Image()
+              item.downloadName = getDownloadName(item.name)
+              item.status = 'running'
+              item.message = '转换中'
 
-          img.onload = () => {
-            const canvas = document.createElement('canvas')
-            canvas.width = img.naturalWidth || img.width
-            canvas.height = img.naturalHeight || img.height
+              try {
+                let source = sourceCache.get(item.id)
+                if (!source) {
+                  source = await createSource(item.originalUrl)
+                  if (runId !== batchRunId || item.cancelled) continue
+                  sourceCache.set(item.id, source)
+                }
+                item.oversized = source.oversized
 
-            const ctx = canvas.getContext('2d')
-            ctx.drawImage(img, 0, 0)
+                revokeUrl(item.convertedUrl)
+                const blob = await encodeCanvas(source, formatMap[selectedFormat.value], quality.value)
+                if (runId !== batchRunId || item.cancelled || !batchItems.value.includes(item)) continue
 
-            canvas.toBlob((blob) => {
-              if (!blob) {
-                revokeUrl(originalUrl)
-                reject(new Error('当前浏览器不支持该格式转换'))
-                return
+                item.convertedBlob = blob
+                item.convertedSize = blob.size
+                item.convertedUrl = URL.createObjectURL(blob)
+                item.status = 'success'
+                item.message = `已转换为 ${selectedFormat.value.toUpperCase()}${source.oversized ? '（已缩小）' : ''}`
+              } catch (err) {
+                if (runId !== batchRunId || item.cancelled) continue
+                item.status = 'error'
+                item.message = err.message || '转换失败'
               }
-
-              resolve({
-                originalUrl,
-                convertedUrl: URL.createObjectURL(blob),
-                convertedBlob: blob
-              })
-            }, format.mime, selectedFormat.value === 'png' ? undefined : 0.92)
+            }
+          } finally {
+            if (runId === batchRunId) isBatchConverting.value = false
           }
-
-          img.onerror = () => {
-            revokeUrl(originalUrl)
-            reject(new Error('图片加载失败，请确认文件可用'))
-          }
-
-          img.src = originalUrl
-        })
-
-        const getDownloadName = (fileName) => {
-          const ext = formatMap[selectedFormat.value].ext
-          const baseName = fileName.replace(/\.[^.]+$/, '') || 'converted'
-          return `${baseName}.${ext}`
         }
 
+        // ---------- 打包下载 ----------
         const getUniqueZipName = (fileName, usedNames) => {
           const dotIndex = fileName.lastIndexOf('.')
           const name = dotIndex > -1 ? fileName.slice(0, dotIndex) : fileName
@@ -798,20 +1789,62 @@
           }
         }
 
-        const statusLabel = (status) => {
-          const labels = {
-            pending: '等待',
-            running: '转换中',
-            success: '完成',
-            error: '失败'
-          }
-          return labels[status] || status
+        // ---------- 拖拽 ----------
+        const hasFiles = (e) => {
+          const dt = e.dataTransfer
+          if (!dt || !dt.types) return false
+          return Array.from(dt.types).includes('Files')
         }
 
-        const formatSize = (size) => {
-          if (size < 1024) return `${size} B`
-          if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
-          return `${(size / 1024 / 1024).toFixed(2)} MB`
+        const handleDragEnter = (e) => {
+          if (!hasFiles(e)) return
+          e.preventDefault()
+          dragDepth += 1
+          isDragover.value = true
+        }
+
+        const handleDragOver = (e) => {
+          if (!hasFiles(e)) return
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'copy'
+          isDragover.value = true
+        }
+
+        const handleDragLeave = (e) => {
+          if (!hasFiles(e)) return
+          e.preventDefault()
+          dragDepth = Math.max(0, dragDepth - 1)
+          if (dragDepth === 0) isDragover.value = false
+        }
+
+        const handleDrop = (e) => {
+          e.preventDefault()
+          dragDepth = 0
+          isDragover.value = false
+
+          const files = Array.from((e.dataTransfer && e.dataTransfer.files) || [])
+          if (!files.length) return
+          if (!files.some(isSupportedFile)) {
+            error.value = '仅支持 AVIF 或 WebP 格式的图片'
+            return
+          }
+          processFiles(files)
+        }
+
+        const handleKeydown = (e) => {
+          if (!lightbox.value) return
+          const tag = e.target && e.target.tagName
+          if (tag === 'INPUT' || tag === 'TEXTAREA') return
+
+          if (e.key === 'Escape') {
+            closeLightbox()
+          } else if (e.key === '+' || e.key === '=') {
+            zoomBy(1)
+          } else if (e.key === '-' || e.key === '_') {
+            zoomBy(-1)
+          } else if (e.key === '0') {
+            zoomFit()
+          }
         }
 
         return {
@@ -819,42 +1852,94 @@
           mode,
           isDragover,
           selectedFormat,
+          quality,
+          qualityApplicable,
+          qualityPercent,
           originalImageUrl,
           convertedImageUrl,
+          originalSize,
+          convertedSize,
           error,
+          notice,
           showPreview,
           showDownload,
           previewTitle,
+          previewMessage,
           batchItems,
           isBatchConverting,
           isZipping,
+          lightbox,
+          lightboxImgStyle,
+          zoomPercent,
+          atMinZoom,
+          atMaxZoom,
+          canDrag,
+          isDragging,
+          copiedKey,
+          canCopyImage,
+          originalDownloadName,
           uploadText,
           downloadUrl,
           downloadFileName,
           downloadBtnText,
           successfulBatchItems,
           batchDownloadBtnText,
+          singleRatio,
           statusText,
           setMode,
           selectFormat,
+          onQualityInput,
+          onQualityChange,
           handleFileSelect,
+          handleDragEnter,
           handleDragOver,
           handleDragLeave,
           handleDrop,
+          handleKeydown,
           downloadAllBatch,
+          removeBatchItem,
+          clearBatch,
+          clearSingle,
+          triggerFileInput,
+          openSingleOriginal,
+          openSingleConverted,
+          openBatchOriginal,
+          openBatchConverted,
+          closeLightbox,
+          zoomBy,
+          zoomFit,
+          zoomActual,
+          toggleActual,
+          onLightboxImgLoad,
+          onLightboxWheel,
+          startDrag,
+          onDrag,
+          endDrag,
+          handleResize,
+          copySingle,
+          copyItem,
+          copyCurrent,
           statusLabel,
+          placeholderText,
+          ratioOf,
           formatSize
         }
       },
       mounted() {
-        document.addEventListener('dragover', this.handleDragOver)
-        document.addEventListener('dragleave', this.handleDragLeave)
-        document.addEventListener('drop', this.handleDrop)
+        window.addEventListener('dragenter', this.handleDragEnter)
+        window.addEventListener('dragover', this.handleDragOver)
+        window.addEventListener('dragleave', this.handleDragLeave)
+        window.addEventListener('drop', this.handleDrop)
+        window.addEventListener('keydown', this.handleKeydown)
+        window.addEventListener('resize', this.handleResize)
       },
       unmounted() {
-        document.removeEventListener('dragover', this.handleDragOver)
-        document.removeEventListener('dragleave', this.handleDragLeave)
-        document.removeEventListener('drop', this.handleDrop)
+        window.removeEventListener('dragenter', this.handleDragEnter)
+        window.removeEventListener('dragover', this.handleDragOver)
+        window.removeEventListener('dragleave', this.handleDragLeave)
+        window.removeEventListener('drop', this.handleDrop)
+        window.removeEventListener('keydown', this.handleKeydown)
+        window.removeEventListener('resize', this.handleResize)
       }
     }).mount('#app')
   </script>
